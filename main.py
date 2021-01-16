@@ -1,6 +1,7 @@
 import discord
 import math
 import numpy as np
+import os
 
 client = discord.Client()
 
