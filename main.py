@@ -56,5 +56,5 @@ async def on_message(message):
     if message.content.startswith('$help'):
         await message.channel.send('Use $team x to generate teams of x')
 
-discord_token = os.environ.get('discord-token')
+discord_token = os.environ.get('DISCORD_TOKEN')
 client.run(discord_token)
