@@ -14,9 +14,13 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    if len(message.content) > 200:
+        await message.channel.send(message.content)
+        return
+
     if message.content.startswith('@ekimbot'):
         await message.channel.send("I'm down")
-        return 
+        return
 
     if message.content.startswith('$team'):
         team_size = -1
