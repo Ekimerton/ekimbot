@@ -1,5 +1,6 @@
 import discord
 import math
+import random
 import numpy as np
 import os
 
@@ -21,6 +22,10 @@ async def on_message(message):
     if message.content.startswith('@ekimbot'):
         await message.channel.send("I'm down")
         return
+
+    if message.content.startswith('$coinflip'):
+        rand = random.randint(0, 1)
+        await message.channel.send("Heads" if rand else "Tails")
 
     if message.content.startswith('$team'):
         team_size = -1
