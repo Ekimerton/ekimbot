@@ -21,7 +21,7 @@ async def on_message(message):
     banned_words = ['league of legends', 'league', 'dota', 'dota 2']
     regex = re.compile('|'.join(map(re.escape, banned_words)), re.IGNORECASE)
     if any(word in message.content.lower() for word in banned_words):
-        await message.channel.send(":warning: Fatwa placed on " + message.author.name + " for the following message :warning: : \n\n" + regex.sub("`REDACTED`", message.content) + '\n')
+        await message.channel.send(":warning: Fatwa placed on @" + message.author.name + " for the following message :warning: : \n\n" + regex.sub("`REDACTED`", message.content) + '\n')
         await message.delete()
 
     if len(message.content) > 200:
