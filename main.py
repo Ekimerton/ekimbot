@@ -18,7 +18,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    banned_words = ['league of legends', 'league', 'Ieague', 'dota', 'dota 2']
+    banned_words = ['league of legends', 'league', 'ieague', 'dota', 'dota 2', 'aram', 'tft']
     regex = re.compile('|'.join(map(re.escape, banned_words)), re.IGNORECASE)
     if any(word in message.content.lower() for word in banned_words):
         await message.channel.send(":warning: Fatwa placed on " + message.author.mention + " for the following message :warning: : \n\n" + regex.sub("`REDACTED`", message.content) + '\n')
