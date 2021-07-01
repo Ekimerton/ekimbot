@@ -1,26 +1,31 @@
 import discord
 import math
 import random
+import re
 import numpy as np
 import os
 
 client = discord.Client()
 
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+
 
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
 
+    banned_words = ['league of legends', 'league', 'dota', 'dota 2']
+    regex = re.compile('|'.join(map(re.escape, banned_words)), re.IGNORECASE)
+    if any(word in message.content.lower() for word in banned_words):
+        await message.channel.send(":warning: Fatwa placed on " + message.author.name + " for the following message :warning: : \n\n" + regex.sub("`REDACTED`", message.content) + '\n')
+        await message.delete()
+
     if len(message.content) > 200:
         await message.channel.send(message.content)
-        return
-
-    if message.content.startswith('@ekimbot'):
-        await message.channel.send("I'm down")
         return
 
     if message.content.startswith('$coinflip'):
@@ -63,7 +68,12 @@ async def on_message(message):
         await message.channel.send(', '.join(result))
 
     if message.content.startswith('$help'):
-        await message.channel.send('Use $team x to generate teams of x')
+        await message.channel.send(
+            '''
+            Use $team x to generate teams of x \n
+            Use $coinflip to flip a coin
+            '''
+        )
 
 discord_token = os.environ.get('DISCORD_TOKEN')
 client.run(discord_token)
