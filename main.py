@@ -119,13 +119,5 @@ async def on_message(message):
             await message.add_reaction('✅')
         except:
             await message.add_reaction('❌')
-        await message.channel.send(
-            '''
-User ID: {id} \n
-Worldle Number: {num} \n
-Wordle In: {wordle_in} \n
-Hard Mode: {hard} \n
-            '''.format(id=user_id, num=wordle_number, wordle_in=wordle_in, hard=hard_mode)
-        )
 
 client.run(DISCORD_TOKEN)
