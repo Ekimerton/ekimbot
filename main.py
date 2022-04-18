@@ -29,20 +29,25 @@ async def wordle_winner_job():
     latest_wordle = cur.fetchone()[0]
 
     cur.execute(
-        'SELECT min(wordle_in) FROM "Ekimerton/ekimbot"."wordle" WHERE "wordle_number" = {latest_wordle}'.format(latest_wordle=latest_wordle))
-    latest_best = cur.fetchone()[0]
+        'SELECT count(user_id), avg(wordle_in), min(wordle_in) FROM "Ekimerton/ekimbot"."wordle" WHERE "wordle_number" = {latest_wordle}'.format(latest_wordle=latest_wordle))
+    daily_stats = cur.fetchone()
+    player_count = daily_stats[0]
+    avg_wordle = round(daily_stats[1], 2)
+    min_wordle = daily_stats[2]
 
     cur.execute(
-        'SELECT DISTINCT user_id FROM "Ekimerton/ekimbot"."wordle" WHERE wordle_number = {latest_wordle} AND wordle_in = {latest_best}'.format(latest_wordle=latest_wordle, latest_best=latest_best))
+        'SELECT DISTINCT user_id FROM "Ekimerton/ekimbot"."wordle" WHERE wordle_number = {latest_wordle} AND wordle_in = {min_wordle}'.format(latest_wordle=latest_wordle, min_wordle=min_wordle))
     latest_winners = cur.fetchall()
     winners = [winner[0] for winner in latest_winners]
 
-    winner_text = "👑 Yesterday's winner **in {latest_best}** for Wordle {latest_wordle}: \n\n".format(
-        latest_wordle=latest_wordle, latest_best=latest_best)
+    winner_text = "👑 Yesterday's winner **in {min_wordle}** for Wordle {latest_wordle}: \n".format(
+        latest_wordle=latest_wordle, min_wordle=min_wordle)
     for winner in winners:
         user = await client.fetch_user(winner)
         winner_text += user.mention + ', '
     winner_text = winner_text[:-2]
+    winner_text += "\n\n{player_count} players got today's Wordle within an average of {avg_wordle} tries.".format(
+        player_count=player_count, avg_wordle=avg_wordle)
     general = client.guilds[0].text_channels[0]
     await general.send(winner_text)
 
