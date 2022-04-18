@@ -19,7 +19,7 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
 
-@aiocron.crontab('30 23 * * *')
+@aiocron.crontab('30 3 * * *')
 async def wordle_winner_job():
     conn = b.get_connection()
     cur = conn.cursor()
@@ -40,7 +40,7 @@ async def wordle_winner_job():
     latest_winners = cur.fetchall()
     winners = [winner[0] for winner in latest_winners]
 
-    winner_text = "👑 Yesterday's winner **in {min_wordle}** for Wordle {latest_wordle}: \n".format(
+    winner_text = "👑 Today's winner **in {min_wordle}** for Wordle {latest_wordle}: \n".format(
         latest_wordle=latest_wordle, min_wordle=min_wordle)
     for winner in winners:
         user = await client.fetch_user(winner)
