@@ -5,10 +5,10 @@ import re
 import numpy as np
 import os
 import bitdotio
+import aiocron
 
 DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
 BITIO_TOKEN = os.environ.get('BITIO_TOKEN')
-
 
 client = discord.Client()
 b = bitdotio.bitdotio(BITIO_TOKEN)
@@ -17,6 +17,34 @@ b = bitdotio.bitdotio(BITIO_TOKEN)
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+
+
+@aiocron.crontab('30 23 * * *')
+async def wordle_winner_job():
+    conn = b.get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        'SELECT max("wordle_number") from "Ekimerton/ekimbot"."wordle"')
+    latest_wordle = cur.fetchone()[0]
+
+    cur.execute(
+        'SELECT min(wordle_in) FROM "Ekimerton/ekimbot"."wordle" WHERE "wordle_number" = {latest_wordle}'.format(latest_wordle=latest_wordle))
+    latest_best = cur.fetchone()[0]
+
+    cur.execute(
+        'SELECT DISTINCT user_id FROM "Ekimerton/ekimbot"."wordle" WHERE wordle_number = {latest_wordle} AND wordle_in = {latest_best}'.format(latest_wordle=latest_wordle, latest_best=latest_best))
+    latest_winners = cur.fetchall()
+    winners = [winner[0] for winner in latest_winners]
+
+    winner_text = "👑 Yesterday's winner **in {latest_best}** for Wordle {latest_wordle}: \n\n".format(
+        latest_wordle=latest_wordle, latest_best=latest_best)
+    for winner in winners:
+        user = await client.fetch_user(winner)
+        winner_text += user.mention + ', '
+    winner_text = winner_text[:-2]
+    general = client.guilds[0].text_channels[0]
+    await general.send(winner_text)
 
 
 @client.event
@@ -82,28 +110,7 @@ async def on_message(message):
         )
 
     if message.content.startswith('$wordleboard'):
-        conn = b.get_connection()
-        cur = conn.cursor()
-
-        cur.execute(
-            'SELECT max("wordle_number") from "Ekimerton/ekimbot"."wordle"')
-        latest_wordle = cur.fetchone()[0]
-
-        cur.execute(
-            'SELECT min(wordle_in) FROM "Ekimerton/ekimbot"."wordle" WHERE "wordle_number" = {latest_wordle}'.format(latest_wordle=latest_wordle))
-        latest_best = cur.fetchone()[0]
-
-        cur.execute(
-            'SELECT DISTINCT user_id FROM "Ekimerton/ekimbot"."wordle" WHERE wordle_number = {latest_wordle} AND wordle_in = {latest_best}'.format(latest_wordle=latest_wordle, latest_best=latest_best))
-        latest_winners = cur.fetchall()
-        winners = [winner[0] for winner in latest_winners]
-
-        winner_text = "Current winner(s) for wordle {latest_wordle} with a score of {latest_best}/6: \n\n".format(
-            latest_wordle=latest_wordle, latest_best=latest_best)
-        for winner in winners:
-            user = await client.fetch_user(winner)
-            winner_text += user.mention + '\n'
-        await message.channel.send(winner_text)
+        pass
 
     if message.content.startswith('Wordle'):
         user_id = message.author.id
