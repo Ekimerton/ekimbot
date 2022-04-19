@@ -106,16 +106,46 @@ async def on_message(message):
 
         await message.channel.send(', '.join(result))
 
-    if message.content.startswith('$help'):
-        await message.channel.send(
-            '''
-            Use $team x to generate teams of x \n
-            Use $coinflip to flip a coin
-            '''
-        )
-
     if message.content.startswith('$wordleboard'):
-        pass
+        conn = b.get_connection()
+        cur = conn.cursor()
+
+        cur.execute('''
+            SELECT user_id, count(wordle_number) as win_count FROM (
+                SELECT DISTINCT user_id, wordle_number FROM "Ekimerton/ekimbot"."wordle" as w1
+                WHERE wordle_in = (
+                    SELECT min(wordle_in) FROM "Ekimerton/ekimbot"."wordle" as w2
+                    WHERE w2.wordle_number = w1.wordle_number
+                ) AND wordle_number > 300 AND hard_mode = true
+            ) as w3
+            GROUP BY w3.user_id
+            ORDER BY win_count DESC LIMIT 3
+        ''')
+        top_winners = cur.fetchall()
+
+        cur.execute('''
+            SELECT user_id, avg(best_in) as avg_in FROM (
+                SELECT user_id, wordle_number, min(wordle_in) as best_in FROM "Ekimerton/ekimbot"."wordle"
+                WHERE wordle_number > 300 AND hard_mode = true
+                GROUP BY user_id, wordle_number) as w1
+            GROUP BY w1.user_id
+            ORDER BY avg_in LIMIT 3
+        ''')
+        top_averages = cur.fetchall()
+
+        leaderboard_text = ('''
+        **🏆 Top 3 Wordle Winners:** \n
+        🥇 {top_winners[0][0]} - {top_winners[0][1]}\n
+        🥈 {top_winners[1][0]} - {top_winners[1][1]}\n
+        🥉 {top_winners[2][0]} - {top_winners[2][1]}\n
+        \n
+        **🏆 Top 3 Wordle Averages:** \n
+        🥇 {top_averages[0][0]} - {top_averages[0][1]}\n
+        🥈 {top_averages[1][0]} - {top_averages[1][1]}\n
+        🥉 {top_averages[2][0]} - {top_averages[2][1]}\n
+        '''.format(top_winners=top_winners, top_averages=top_averages))
+
+        await message.channel.send(leaderboard_text)
 
     if message.content.startswith('Wordle'):
         user_id = message.author.id
