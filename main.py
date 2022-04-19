@@ -163,6 +163,9 @@ async def on_message(message):
         wordle_in = message.content.split(" ")[2][0]
         hard_mode = message.content.split(" ")[2][3] == '*'
 
+        # If person fails wordle give them a 7/6
+        wordle_in = 7 if wordle_in == "X" else wordle_in
+
         conn = b.get_connection()
         cur = conn.cursor()
         try:
