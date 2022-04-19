@@ -127,6 +127,8 @@ async def on_message(message):
             top_winner_mention = top_winner_user.mention
             top_winners[i] = (top_winner_mention, top_winners[i][1])
 
+        top_winners.append(("Null", 0))
+
         cur.execute('''
             SELECT user_id, avg(best_in) as avg_in FROM (
                 SELECT user_id, wordle_number, min(wordle_in) as best_in FROM "Ekimerton/ekimbot"."wordle"
@@ -142,17 +144,16 @@ async def on_message(message):
             top_averages[i] = (top_average_mention,
                                round(top_averages[i][1], 2))
 
-        leaderboard_text = ('''
-        **🏆 Top 3 Wordle Winners:** \n
-        🥇 {top_winners[0][0]} - {top_winners[0][1]}\n
-        🥈 {top_winners[1][0]} - {top_winners[1][1]}\n
-        🥉 {top_winners[2][0]} - {top_winners[2][1]}\n
-        \n
-        **🏆 Top 3 Wordle Averages:** \n
-        🥇 {top_averages[0][0]} - {top_averages[0][1]}\n
-        🥈 {top_averages[1][0]} - {top_averages[1][1]}\n
-        🥉 {top_averages[2][0]} - {top_averages[2][1]}\n
-        '''.format(top_winners=top_winners, top_averages=top_averages))
+        leaderboard_text = '''
+**🏆 Top 3 Wordle Winners:** \n
+    🥇 {top_winners[0][0]} - {top_winners[0][1]}\n
+    🥈 {top_winners[1][0]} - {top_winners[1][1]}\n
+    🥉 {top_winners[2][0]} - {top_winners[2][1]}\n
+**🏆 Top 3 Wordle Averages:** \n
+    🥇 {top_averages[0][0]} - {top_averages[0][1]}\n
+    🥈 {top_averages[1][0]} - {top_averages[1][1]}\n
+    🥉 {top_averages[2][0]} - {top_averages[2][1]}\n
+'''.format(top_winners=top_winners, top_averages=top_averages)
 
         await message.channel.send(leaderboard_text)
 
