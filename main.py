@@ -122,6 +122,10 @@ async def on_message(message):
             ORDER BY win_count DESC LIMIT 3
         ''')
         top_winners = cur.fetchall()
+        for i in range(len(top_winners)):
+            top_winner_user = await client.fetch_user(top_winners[i][0])
+            top_winner_mention = top_winner_user.mention
+            top_winners[i] = (top_winner_mention, top_winners[i][1])
 
         cur.execute('''
             SELECT user_id, avg(best_in) as avg_in FROM (
@@ -132,6 +136,11 @@ async def on_message(message):
             ORDER BY avg_in LIMIT 3
         ''')
         top_averages = cur.fetchall()
+        for i in range(len(top_averages)):
+            top_average_user = await client.fetch_user(top_averages[i][0])
+            top_average_mention = top_average_user.mention
+            top_averages[i] = (top_average_mention,
+                               round(top_averages[i][1], 2))
 
         leaderboard_text = ('''
         **🏆 Top 3 Wordle Winners:** \n
