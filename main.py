@@ -106,6 +106,60 @@ async def on_message(message):
 
         await message.channel.send(', '.join(result))
 
+    if message.content.startswith('$wordlestat'):
+        conn = b.get_connection()
+        cur = conn.cursor()
+
+        target_id = ""
+        target_user = {}
+        try:
+            target_id = message.content.split(" ")[1]
+            target_id = target_id[2:-1]
+            target_user = await client.fetch_user(target_id)
+        except:
+            target_id = message.author.id
+            target_user = message.author
+
+        cur.execute('''
+            SELECT avg(best_in) AS user_avg, count(1) AS user_days FROM (
+                SELECT user_id, wordle_number, min(wordle_in) AS best_in FROM "Ekimerton/ekimbot"."wordle"
+                WHERE wordle_number > 300 AND hard_mode = true
+                GROUP BY user_id, wordle_number
+            ) AS w1
+            GROUP BY w1.user_id
+            HAVING w1.user_id = {target_id}
+        '''.format(target_id=target_id))
+        user_stats = cur.fetchone()
+
+        if not user_stats:
+            await message.channel.send("No stats found for that user.")
+            return
+
+        user_avg = round(user_stats[0], 2)
+        user_days = user_stats[1]
+
+        cur.execute('''
+            SELECT count(1) as win_count FROM (
+                SELECT DISTINCT user_id, wordle_number FROM "Ekimerton/ekimbot"."wordle" as w1
+                WHERE wordle_in = (
+                    SELECT min(wordle_in) FROM "Ekimerton/ekimbot"."wordle" as w2
+                    WHERE w2.wordle_number = w1.wordle_number
+                ) AND wordle_number > 300 AND hard_mode = true
+            ) as w3
+            GROUP BY w3.user_id
+            HAVING w3.user_id = {target_id}
+        '''.format(target_id=target_id))
+        user_stats = cur.fetchone()
+        user_wins = user_stats[0] if user_stats else 0
+
+        await message.channel.send('''
+Stats for {target_user}:
+
+    📅 Days Played: {user_days}\n
+    📈 Wordle Average: {user_avg}\n
+    🏆 Wordle Wins: {user_wins}
+'''.format(target_user=target_user.mention, user_days=user_days, user_avg=user_avg, user_wins=user_wins))
+
     if message.content.startswith('$wordleboard'):
         conn = b.get_connection()
         cur = conn.cursor()
