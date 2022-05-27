@@ -8,11 +8,11 @@ conn = b.get_connection()
 cur = conn.cursor()
 
 
-def add_wordle_attempt(user_id, wordle_number, wordle_in, hard_mode):
+def add_wordle_attempt(user_id, wordle_number, wordle_in, hard_mode, first_guess):
     cur.execute('''
-        INSERT INTO "Ekimerton/ekimbot"."wordle" (user_id, wordle_number, wordle_in, hard_mode)
-        VALUES ({user_id}, {wordle_number}, {wordle_in}, {hard_mode})
-    '''.format(user_id=user_id, wordle_number=wordle_number, wordle_in=wordle_in,       hard_mode=hard_mode))
+        INSERT INTO "Ekimerton/ekimbot"."wordle" (user_id, wordle_number, wordle_in, hard_mode, first_guess)
+        VALUES ({user_id}, {wordle_number}, {wordle_in}, {hard_mode}, '{first_guess}')
+    '''.format(user_id=user_id, wordle_number=wordle_number, wordle_in=wordle_in,       hard_mode=hard_mode, first_guess=first_guess))
     conn.commit()
 
 

@@ -5,6 +5,7 @@ import numpy as np
 import os
 import bitdotio
 import aiocron
+from src.utils import *
 from src.queries import *
 import src.templates as templates
 
@@ -107,12 +108,16 @@ async def on_message(message):
         wordle_number = message.content.split(" ")[1]
         wordle_in = message.content.split(" ")[2][0]
         hard_mode = message.content.split(" ")[2][3] == '*'
+        first_guess = message.content.split(
+            " ")[2][4 + int(hard_mode):10 + int(hard_mode)]
+        first_guess_char = wordle_to_char(first_guess)
         # If person fails wordle give them a 7/6
         wordle_in = 7 if wordle_in == "X" else wordle_in
         try:
-            add_wordle_attempt(user_id, wordle_number, wordle_in, hard_mode)
+            add_wordle_attempt(user_id, wordle_number,
+                               wordle_in, hard_mode, first_guess_char)
             await message.add_reaction('✅')
-        except:
+        except Exception as e:
             await message.add_reaction('❌')
         return
 
