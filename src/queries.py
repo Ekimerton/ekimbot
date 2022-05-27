@@ -4,11 +4,11 @@ import os
 BITIO_TOKEN = os.environ.get('BITIO_TOKEN')
 
 b = bitdotio.bitdotio(BITIO_TOKEN)
-conn = b.get_connection()
-cur = conn.cursor()
 
 
 def add_wordle_attempt(user_id, wordle_number, wordle_in, hard_mode, first_guess):
+    conn = b.get_connection()
+    cur = conn.cursor()
     cur.execute('''
         INSERT INTO "Ekimerton/ekimbot"."wordle" (user_id, wordle_number, wordle_in, hard_mode, first_guess)
         VALUES ({user_id}, {wordle_number}, {wordle_in}, {hard_mode}, '{first_guess}')
@@ -17,6 +17,8 @@ def add_wordle_attempt(user_id, wordle_number, wordle_in, hard_mode, first_guess
 
 
 def get_latest_wordle():
+    conn = b.get_connection()
+    cur = conn.cursor()
     cur.execute('''
         SELECT max("wordle_number") FROM "Ekimerton/ekimbot"."wordle"
     ''')
@@ -25,6 +27,8 @@ def get_latest_wordle():
 
 
 def get_wordle_stats(wordle_number):
+    conn = b.get_connection()
+    cur = conn.cursor()
     cur.execute('''
         SELECT count(user_id), avg(wordle_in), min(wordle_in) FROM "Ekimerton/ekimbot"."wordle"
         WHERE "wordle_number" = {wordle_number}
@@ -45,6 +49,8 @@ def get_wordle_stats(wordle_number):
 
 
 def get_alltime_winners():
+    conn = b.get_connection()
+    cur = conn.cursor()
     cur.execute('''
         SELECT user_id, count(wordle_number) as win_count FROM (
             SELECT DISTINCT user_id, wordle_number FROM "Ekimerton/ekimbot"."wordle" as w1
@@ -61,6 +67,8 @@ def get_alltime_winners():
 
 
 def get_alltime_averages():
+    conn = b.get_connection()
+    cur = conn.cursor()
     cur.execute('''
         SELECT user_id, avg(best_in) as avg_in FROM (
             SELECT user_id, wordle_number, min(wordle_in) as best_in FROM "Ekimerton/ekimbot"."wordle"
@@ -74,6 +82,8 @@ def get_alltime_averages():
 
 
 def get_user_wins(user_id):
+    conn = b.get_connection()
+    cur = conn.cursor()
     cur.execute('''
         SELECT count(1) as win_count FROM (
             SELECT DISTINCT user_id, wordle_number FROM "Ekimerton/ekimbot"."wordle" as w1
@@ -96,6 +106,8 @@ def get_user_wins(user_id):
 
 
 def get_user_averages_tries(user_id):
+    conn = b.get_connection()
+    cur = conn.cursor()
     cur.execute('''
         SELECT avg(best_in) AS user_avg, count(1) AS user_days FROM (
             SELECT user_id, wordle_number, min(wordle_in) AS best_in FROM "Ekimerton/ekimbot"."wordle"
