@@ -35,6 +35,3 @@ def get_wordle_data():
             except:
                 pass
     return word_list
-
-
-print(get_wordle_data())
