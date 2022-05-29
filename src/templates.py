@@ -1,5 +1,5 @@
 DAILY_WINNER = '''
-👑 Today's winner **in {min_attempt}** for Wordle {latest_wordle}:
+👑 Today's winner || in {min_attempt} || for Wordle {latest_wordle}:
 {winners_text}
 
 {player_count} players got today's Wordle within an average of {avg_attempt} tries.
@@ -11,7 +11,7 @@ LEADERBOARD = '''
     🥇 {top_winners[0][0]} - {top_winners[0][1]}
     🥈 {top_winners[1][0]} - {top_winners[1][1]}
     🥉 {top_winners[2][0]} - {top_winners[2][1]}
-    
+
 **🏆 Top 3 Wordle Averages:**
 
     🥇 {top_averages[0][0]} - {top_averages[0][1]}
