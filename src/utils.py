@@ -19,11 +19,11 @@ def char_to_wordle(char):
     return formatted
 
 
-def get_wordle_data():
+def get_wordle_answers():
     url = "https://progameguides.com/wordle/all-wordle-answers-in-2022-updated-daily/"
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
-    word_list = []
+    word_list = {}
     for ul_tag in soup.find_all('ul'):
         for li_tag in ul_tag.find_all('li'):
             try:
@@ -31,7 +31,27 @@ def get_wordle_data():
                 day_sym = text.index('#')
                 day = int(text[day_sym + 1:day_sym + 4])
                 word = text[day_sym + 6:]
-                word_list.append((day, word))
+                word_list[day] = word
             except:
                 pass
+    latest = soup.find("div", {"id": "todaysAnswer"}).text
+    word_list[max(word_list.keys()) + 1] = latest[-5:]
     return word_list
+
+
+def get_wordle_bank():
+    with open('wordlist.txt') as f:
+        lines = f.read().splitlines()
+        return lines
+
+
+def wordle_evaluate(guess, answer):
+    result = ""
+    for i in range(5):
+        if guess[i] == answer[i]:
+            result += "2"
+        elif guess[i] in answer[:]:
+            result += "1"
+        else:
+            result += "0"
+    return result

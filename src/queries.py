@@ -126,3 +126,15 @@ def get_user_averages_tries(user_id):
     user_days = user_stats[1]
 
     return user_avg, user_days
+
+
+def get_user_starters(user_id):
+    conn = b.get_connection()
+    cur = conn.cursor()
+    cur.execute('''
+        SELECT DISTINCT wordle_number, first_guess FROM "Ekimerton/ekimbot"."wordle"
+        WHERE user_id = {user_id} AND first_guess IS NOT NULL AND wordle_number > 300
+        ORDER BY wordle_number DESC
+    '''.format(user_id=user_id))
+    user_starters = cur.fetchall()
+    return user_starters

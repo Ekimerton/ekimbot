@@ -32,7 +32,7 @@ async def wordle_winner_job():
         winners_text += user.mention + ', '
     winners_text = winners_text[:-2]
     general = client.guilds[0].text_channels[0]
-    await general.send(templates.DAILY_WINNER.format(min_attempt, latest_wordle, winners_text, player_count, avg_attempt))
+    await general.send(templates.DAILY_WINNER.format(min_attempt=min_attempt, latest_wordle=latest_wordle, winners_text=winners_text, player_count=player_count, avg_attempt=avg_attempt))
 
 
 @client.event
