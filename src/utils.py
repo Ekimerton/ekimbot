@@ -11,8 +11,8 @@ def wordle_to_char(wordle_input):
     base_3 = int(wordle_input, 3)
     char = chr(base_3 + 20)
     if char == "'":
-        char = "\'"
-    return char
+        char = "\\'"
+    return base_3 + 20
 
 
 def char_to_wordle(char):
