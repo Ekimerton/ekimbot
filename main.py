@@ -118,6 +118,7 @@ async def on_message(message):
                                wordle_in, hard_mode, first_guess_char)
             await message.add_reaction('✅')
         except Exception as e:
+            print(e)
             await message.add_reaction('❌')
         return
 
