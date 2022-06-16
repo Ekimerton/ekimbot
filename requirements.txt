@@ -4,7 +4,7 @@ async-timeout==3.0.1
 attrs==20.3.0
 autopep8==1.6.0
 beautifulsoup4==4.11.1
-bitdotio==1.0.0b1
+bitdotio==1.1.0b1
 certifi==2021.10.8
 chardet==3.0.4
 charset-normalizer==2.0.12
@@ -14,7 +14,7 @@ discord.py==1.6.0
 idna==3.1
 multidict==5.1.0
 numpy==1.19.5
-psycopg2==2.9.3
+psycopg2-binary==2.9.3
 pycodestyle==2.8.0
 python-dateutil==2.8.2
 pytz==2022.1
