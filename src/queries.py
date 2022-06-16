@@ -120,7 +120,7 @@ def get_user_averages_tries(user_id):
             user_stats = cur.fetchone()
 
             if not user_stats:
-                return None
+                return None, None
 
             user_avg = round(user_stats[0], 2)
             user_days = user_stats[1]
