@@ -19,6 +19,10 @@ b = bitdotio.bitdotio(BITIO_TOKEN)
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+    while(True):
+        message = input("Go ahead: ")
+        general = client.guilds[0].text_channels[0]
+        await general.send(message)
 
 
 @aiocron.crontab('30 3 * * *')
