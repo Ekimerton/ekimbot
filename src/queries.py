@@ -7,7 +7,7 @@ b = bitdotio.bitdotio(BITIO_TOKEN)
 
 
 def add_wordle_attempt(user_id, wordle_number, wordle_in, hard_mode, first_guess):
-    with b.get_connection() as conn:
+    with b.get_connection("Ekimerton/ekimbot") as conn:
         with conn.cursor() as cur:
             cur.execute('''
                 INSERT INTO "Ekimerton/ekimbot"."wordle" (user_id, wordle_number, wordle_in, hard_mode, first_guess)
