@@ -99,7 +99,10 @@ async def on_message(message):
             top_winner_user = await client.fetch_user(top_winners[i][0])
             top_winner_mention = top_winner_user.mention
             top_winners[i] = (top_winner_mention, top_winners[i][1])
-        top_winners.append(("Null", 0))
+        if len(top_winners) < 3:
+            top_winners.append(("Null", 0))
+            top_winners.append(("Null", 0))
+            top_winners.append(("Null", 0))
         top_averages = get_alltime_averages()
         for i in range(len(top_averages)):
             top_average_user = await client.fetch_user(top_averages[i][0])

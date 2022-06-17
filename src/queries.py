@@ -2,6 +2,8 @@ import bitdotio
 import os
 
 BITIO_TOKEN = os.environ.get('BITIO_TOKEN')
+SEASONS_START = [0, 320, 360]
+SEASONS_HARD = [True, True, False]
 
 b = bitdotio.bitdotio(BITIO_TOKEN)
 
@@ -90,7 +92,7 @@ def get_user_wins(user_id):
                     WHERE wordle_in = (
                         SELECT min(wordle_in) FROM "Ekimerton/ekimbot"."wordle" as w2
                         WHERE w2.wordle_number = w1.wordle_number
-                    ) AND wordle_number > 360
+                    ) AND wordle_number > 320
                 ) as w3
                 GROUP BY w3.user_id
                 HAVING w3.user_id = {user_id}
@@ -111,7 +113,7 @@ def get_user_averages_tries(user_id):
             cur.execute('''
                 SELECT avg(best_in) AS user_avg, count(1) AS user_days FROM (
                     SELECT user_id, wordle_number, min(wordle_in) AS best_in FROM "Ekimerton/ekimbot"."wordle"
-                    WHERE wordle_number > 360
+                    WHERE wordle_number > 320
                     GROUP BY user_id, wordle_number
                 ) AS w1
                 GROUP BY w1.user_id
@@ -126,6 +128,10 @@ def get_user_averages_tries(user_id):
             user_days = user_stats[1]
 
             return user_avg, user_days
+
+
+def get_user_trophies(user_id, season):
+    pass
 
 
 def get_user_starters(user_id):
