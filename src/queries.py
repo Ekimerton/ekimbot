@@ -2,7 +2,7 @@ import bitdotio
 import os
 
 BITIO_TOKEN = os.environ.get('BITIO_TOKEN')
-SEASONS_START = [0, 320, 360]
+SEASONS_START = [302, 360]
 SEASONS_HARD = [True, True, False]
 
 b = bitdotio.bitdotio(BITIO_TOKEN)
@@ -14,7 +14,7 @@ def add_wordle_attempt(user_id, wordle_number, wordle_in, hard_mode, first_guess
             cur.execute('''
                 INSERT INTO "Ekimerton/ekimbot"."wordle" (user_id, wordle_number, wordle_in, hard_mode, first_guess)
                 VALUES ({user_id}, {wordle_number}, {wordle_in}, {hard_mode}, '{first_guess}')
-            '''.format(user_id=user_id, wordle_number=wordle_number, wordle_in=wordle_in,       hard_mode=hard_mode, first_guess=first_guess))
+            '''.format(user_id=user_id, wordle_number=wordle_number, wordle_in=wordle_in, hard_mode=hard_mode, first_guess=first_guess))
             conn.commit()
 
 
@@ -74,11 +74,11 @@ def get_alltime_averages():
             cur.execute('''
                 SELECT user_id, avg(best_in) as avg_in FROM (
                     SELECT user_id, wordle_number, min(wordle_in) as best_in FROM "Ekimerton/ekimbot"."wordle"
-                    WHERE wordle_number > 360
+                    WHERE wordle_number > {season[-1]}
                     GROUP BY user_id, wordle_number) as w1
                 GROUP BY w1.user_id
                 ORDER BY avg_in LIMIT 3
-            ''')
+            '''.format(season=SEASONS_START))
             top_averages = cur.fetchall()
             return top_averages
 
@@ -92,11 +92,11 @@ def get_user_wins(user_id):
                     WHERE wordle_in = (
                         SELECT min(wordle_in) FROM "Ekimerton/ekimbot"."wordle" as w2
                         WHERE w2.wordle_number = w1.wordle_number
-                    ) AND wordle_number > 320
+                    ) AND wordle_number > {season[0]}
                 ) as w3
                 GROUP BY w3.user_id
                 HAVING w3.user_id = {user_id}
-            '''.format(user_id=user_id))
+            '''.format(user_id=user_id, season=SEASONS_START))
             user_stats = cur.fetchone()
 
             if not user_stats:
@@ -113,12 +113,12 @@ def get_user_averages_tries(user_id):
             cur.execute('''
                 SELECT avg(best_in) AS user_avg, count(1) AS user_days FROM (
                     SELECT user_id, wordle_number, min(wordle_in) AS best_in FROM "Ekimerton/ekimbot"."wordle"
-                    WHERE wordle_number > 320
+                    WHERE wordle_number > {season[0]}
                     GROUP BY user_id, wordle_number
                 ) AS w1
                 GROUP BY w1.user_id
                 HAVING w1.user_id = {user_id}
-            '''.format(user_id=user_id))
+            '''.format(user_id=user_id, season=SEASONS_START))
             user_stats = cur.fetchone()
 
             if not user_stats:
@@ -139,8 +139,8 @@ def get_user_starters(user_id):
         with conn.cursor() as cur:
             cur.execute('''
                 SELECT DISTINCT wordle_number, first_guess FROM "Ekimerton/ekimbot"."wordle"
-                WHERE user_id = {user_id} AND first_guess IS NOT NULL AND wordle_number > 360
+                WHERE user_id = {user_id} AND first_guess IS NOT NULL AND wordle_number > {seasons[0]}
                 ORDER BY wordle_number DESC
-            '''.format(user_id=user_id))
+            '''.format(user_id=user_id, season=SEASONS_START))
             user_starters = cur.fetchall()
             return user_starters
