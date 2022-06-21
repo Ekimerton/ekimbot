@@ -74,7 +74,7 @@ def get_alltime_averages():
             cur.execute('''
                 SELECT user_id, avg(best_in) as avg_in FROM (
                     SELECT user_id, wordle_number, min(wordle_in) as best_in FROM "Ekimerton/ekimbot"."wordle"
-                    WHERE wordle_number > season
+                    WHERE wordle_number > {season}
                     GROUP BY user_id, wordle_number) as w1
                 GROUP BY w1.user_id
                 ORDER BY avg_in LIMIT 3
