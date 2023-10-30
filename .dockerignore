@@ -1,0 +1,9 @@
+# flyctl launch added from .gitignore
+**/env
+**/*.pyc
+**/.vscode
+
+# flyctl launch added from env/.gitignore
+# created by virtualenv automatically
+env/**/*
+fly.toml
