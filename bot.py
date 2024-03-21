@@ -1,6 +1,6 @@
 import discord
 import os
-from commands import coinflip, team
+from commands import coinflip, team, ban
 
 # Initialize Intents
 intents = discord.Intents.default()
@@ -27,5 +27,8 @@ async def on_message(message):
     if message.content.startswith('$team'):
         await team.run_command(message)
         return
+
+    if message.content.startswith('$ban'):
+        await ban.run_command(message)
 
 client.run(DISCORD_TOKEN)

@@ -16,7 +16,7 @@ async def run_command(message: discord.Message):
             users.append(user.name)
         total_size = len(users)
     except Exception as e:
-        await message.channel.send(e)
+        await message.channel.send("Must be used while in a call to generate teams based on the people there. Usage is $team TEAM_SIZE")
         return
     perm = np.random.permutation(users)
     teams = np.array_split(perm, math.ceil(total_size / team_size))
