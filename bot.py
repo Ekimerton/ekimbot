@@ -13,30 +13,30 @@ client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
-    print(f'We have logged in as {client.user}')
+	print(f'We have logged in as {client.user}')
 
 
 @client.event
 async def on_message(message):
-    if message.author == client.user:
-        return
+	if message.author == client.user:
+		return
 
-    if message.content.startswith('$coinflip'):
-        await coinflip.run_command(message)
-        return
+	if message.content.startswith('$coinflip'):
+		await coinflip.run_command(message)
+		return
 
-    if message.content.startswith('$team'):
-        await team.run_command(message)
-        return
+	if message.content.startswith('$team'):
+		await team.run_command(message)
+		return
 
-    if message.content.startswith('$ban'):
-        await ban.run_command(message)
-    
-    if client.user in message.mentions:
+	if message.content.startswith('$ban'):
+		await ban.run_command(message)
+	
+	if client.user in message.mentions:
 		await llm.run_command(message)
 
-    if message.content.startswith('$help'):
-        help_message = """
+	if message.content.startswith('$help'):
+		help_message = """
 Here are the commands you can use:
 
 $coinflip - Flips a coin and returns either heads or tails.
@@ -45,7 +45,7 @@ $team [TEAM_SIZE] - Randomly divides the people in your voice channel into teams
 
 $ban - Randomly selects a member from the server (excluding bots) and sends their name as a chosen one.
 """
-        await message.channel.send(help_message)
+		await message.channel.send(help_message)
 
 
 client.run(DISCORD_TOKEN)
