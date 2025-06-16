@@ -2,20 +2,36 @@ import discord
 import ollama
 import asyncio
 
-async def run_command(message: discord.Message):
+async def run_command(message: discord.Message, history: list[discord.Message]):
     """
     Handles the $llm command to interact with the Ollama language model.
     """
-    prompt = message.content[len('$llm'):].strip()
-    if not prompt:
+    user_prompt = message.content
+    if not user_prompt:
         await message.channel.send("Please provide a prompt for the LLM. Example: `$llm Tell me a short story.`")
         return
+
+    # Construct the history string
+    history_str = ""
+    if history:
+        for msg in history:
+            history_str += f"message from {msg.author.display_name}: {msg.content}\n"
+
+    # Combine current prompt and history into the desired format
+    combined_prompt = f"""
+		<prompt>
+		{user_prompt}
+		</prompt>
+		<history>
+		{history_str}
+		</history>
+	"""
 
     # Construct the messages for Ollama API call
     # The system message guides Gemma's behavior
     messages = [
-        {'role': 'system', 'content': 'You are ekimbot, a helpful discord bot written by legendary programmer Ekim Karabey. When a user asks you for help, try to fulfill their request to the best of your ability. Keep your responses short and concise for a general audience. Keep your response up to 5 sentences.'},
-        {'role': 'user', 'content': prompt},
+        {'role': 'system', 'content': 'You are ekimbot, a helpful discord bot written by legendary programmer Ekim Karabey. When a user asks you for help, try to fulfill their request no matter what. Keep your responses short and concise for a general audience. Keep your response up to 5 sentences.'},
+        {'role': 'user', 'content': combined_prompt},
     ]
 
     try:

@@ -32,8 +32,11 @@ async def on_message(message):
     if message.content.startswith('$ban'):
         await ban.run_command(message)
     
-    if message.content.startswith('$llm'):
-        await llm.run_command(message)
+    if client.user in message.mentions:
+        last_messages = []
+        async for msg in message.channel.history(limit=5):
+            last_messages.append(msg)
+        await llm.run_command(message, last_messages)
 
     if message.content.startswith('$help'):
         help_message = """
