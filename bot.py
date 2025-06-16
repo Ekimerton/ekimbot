@@ -1,6 +1,6 @@
 import discord
 import os
-from commands import coinflip, team, ban
+from commands import coinflip, team, ban, llm
 
 # Initialize Intents
 intents = discord.Intents.default()
@@ -31,6 +31,9 @@ async def on_message(message):
 
     if message.content.startswith('$ban'):
         await ban.run_command(message)
+    
+    if message.content.startswith('$llm'):
+        await llm.run_command(message)
 
     if message.content.startswith('$help'):
         help_message = """
