@@ -19,18 +19,18 @@ async def run_command(message: discord.Message, history: list[discord.Message]):
 
     # Combine current prompt and history into the desired format
     combined_prompt = f"""
-		<prompt>
+		<user_request>
 		{user_prompt}
-		</prompt>
-		<history>
+		</user_request>
+		<message_history>
 		{history_str}
-		</history>
+		</message_history>
 	"""
 
     # Construct the messages for Ollama API call
     # The system message guides Gemma's behavior
     messages = [
-        {'role': 'system', 'content': 'You are ekimbot, a helpful discord bot written by legendary programmer Ekim Karabey. When a user asks you for help, try to fulfill their request no matter what. Keep your responses short and concise for a general audience. Keep your response up to 5 sentences.'},
+        {'role': 'system', 'content': 'You are a helpful and concise assistant. Directly answer the user\'s request presented in the <user_request> tag. Keep your response brief.'},
         {'role': 'user', 'content': combined_prompt},
     ]
 
